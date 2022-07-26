@@ -17,7 +17,6 @@ const ChatBox = () => {
     const [uid, setUid] = useState("");
     const socket = useRef();
     const chatRef = useRef();
-    const [loggedUserInfo, setLoggedUserInfo] = useState([]);
 
     // channel message
     const chatData = getChannelMsg.filter((item) => {
@@ -36,7 +35,6 @@ const ChatBox = () => {
             const decoded = jwtDecode(token);
             if (typeof decoded !== "undefined") {
                 setUid(decoded._id);
-                setLoggedUserInfo(decoded);
             }
         }
     }, []);
@@ -89,13 +87,7 @@ const ChatBox = () => {
                             <span>
                                 # {chatData[0]?.channelName} (Channel Creator:{" "}
                                 <span className="capitalize">
-                                    {chatData[0]?.channelCreatorId === uid ||
-                                        (chatData[0]?.channelCreatorId._id ===
-                                            uid && (
-                                            <span className="capitalize">
-                                                {loggedUserInfo?.fullName}
-                                            </span>
-                                        ))}
+                                    {chatData[0]?.channelCreatorId.fullName}
                                 </span>
                                 )
                             </span>
@@ -137,9 +129,7 @@ const ChatBox = () => {
                                             </span>
                                         </h4>
                                         <p className="text-sm text-white flex gap-1 items-center">
-                                            <div>
-                                                <IoMdArrowDropright className="text-lg" />
-                                            </div>
+                                            <IoMdArrowDropright className="text-lg" />
                                             {item.msg}
                                         </p>
                                     </div>

@@ -1,17 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LeftBar from "../../components/LeftBar";
 import Sidebar from "../../components/Sidebar";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { initChannelData } from "../../store/features/channelSlice";
+import {
+    addOnlineUser,
+    initChannelData,
+} from "../../store/features/channelSlice";
 import CreateChannelModal from "../../components/CreateChannelModal";
 import ChatBox from "../../components/ChatBox";
 import { useParams } from "react-router-dom";
+import { io } from "socket.io-client";
+import Option from "../../components/Option";
 
 const Home = () => {
     const dispatch = useDispatch();
     const [isShowed, setShowed] = useState(false);
+
+    const socket = useRef();
 
     const { id } = useParams();
 
@@ -20,7 +27,14 @@ const Home = () => {
     };
 
     useEffect(() => {
-        const findChanne = async () => {
+        socket.current = io(process.env.REACT_APP_SOCKET_URL);
+        socket.current.on("online_user_received", (data) => {
+            dispatch(addOnlineUser(data));
+        });
+    }, [dispatch]);
+
+    useEffect(() => {
+        const init = async () => {
             if ("_logged" in localStorage) {
                 const token = window.localStorage.getItem("_logged");
                 const decoded = jwtDecode(token);
@@ -29,14 +43,19 @@ const Home = () => {
                     const res = await axios({
                         url: `${process.env.REACT_APP_API}/api/v1/find/joined/channel?userId=${decoded._id}`,
                     });
-                    dispatch(initChannelData(res.data.data));
+                    if (res.status === 200) {
+                        dispatch(initChannelData(res.data.data));
+                        socket.current.emit("online_user_status", decoded);
+                    }
                 } catch (error) {
                     console.log(error);
                 }
             }
         };
-        findChanne();
+        init();
     }, [dispatch]);
+
+    console.log(id);
 
     return (
         <>
@@ -45,6 +64,7 @@ const Home = () => {
                 {typeof id === "undefined" && <Sidebar />}
 
                 <ChatBox />
+                <Option />
                 {isShowed && <CreateChannelModal state={setShowed} />}
             </div>
         </>
