@@ -15,10 +15,7 @@ const Register = () => {
 
     const formSubmit = async (data) => {
         try {
-            const res = await axios.post(
-                `${process.env.REACT_APP_API}/api/v1/reg`,
-                data
-            );
+            const res = await axios.post(`/api/v1/reg`, data);
             toast.success(res.data.msg, {
                 position: "top-right",
                 autoClose: 5000,
