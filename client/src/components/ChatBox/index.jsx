@@ -25,7 +25,7 @@ const ChatBox = () => {
 
     // channel functionality
     useEffect(() => {
-        socket.current = io(process.env.REACT_APP_SOCKET_URL);
+        socket.current = io("/");
     }, []);
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const ChatBox = () => {
                 const decoded = jwtDecode(token);
                 try {
                     const res = await axios({
-                        url: `${process.env.REACT_APP_API}/api/v1/create/channel/msg?channelId=${id}&userId=${decoded._id}`,
+                        url: `/api/v1/create/channel/msg?channelId=${id}&userId=${decoded._id}`,
                         method: "PUT",
                         data: {
                             msg: getMsg,

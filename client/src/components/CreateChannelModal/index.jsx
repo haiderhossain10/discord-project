@@ -15,7 +15,7 @@ const CreateChannelModal = ({ state }) => {
     const socket = useRef();
 
     useEffect(() => {
-        socket.current = io(process.env.REACT_APP_SOCKET_URL);
+        socket.current = io("/");
     }, []);
 
     const onSubmit = async (formData) => {
@@ -24,7 +24,7 @@ const CreateChannelModal = ({ state }) => {
             const decoded = jwtDecode(token);
             try {
                 const res = await axios({
-                    url: `${process.env.REACT_APP_API}/api/v1/create/channel`,
+                    url: `/api/v1/create/channel`,
                     method: "POST",
                     data: {
                         channelName: formData.channelName.trim(),

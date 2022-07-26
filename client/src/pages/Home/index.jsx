@@ -27,7 +27,7 @@ const Home = () => {
     };
 
     useEffect(() => {
-        socket.current = io(process.env.REACT_APP_SOCKET_URL);
+        socket.current = io("/");
         socket.current.on("online_user_received", (data) => {
             dispatch(addOnlineUser(data));
         });
@@ -41,7 +41,7 @@ const Home = () => {
 
                 try {
                     const res = await axios({
-                        url: `${process.env.REACT_APP_API}/api/v1/find/joined/channel?userId=${decoded._id}`,
+                        url: `/api/v1/find/joined/channel?userId=${decoded._id}`,
                     });
                     if (res.status === 200) {
                         dispatch(initChannelData(res.data.data));

@@ -15,7 +15,7 @@ const LeftBar = ({ channelCreateHandler }) => {
     const socket = useRef();
 
     useEffect(() => {
-        socket.current = io(process.env.REACT_APP_SOCKET_URL);
+        socket.current = io("/");
     }, []);
 
     useEffect(() => {
