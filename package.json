@@ -8,7 +8,8 @@
     "start": "node index.js",
     "front-end": "npm start -prefix client",
     "back-end": "nodemon index.js",
-    "dev": "concurrently \"npm run front-end\" \"npm run back-end\""
+    "dev": "concurrently \"npm run front-end\" \"npm run back-end\"",
+    "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
