@@ -13,13 +13,11 @@ export const channelSlice = createSlice({
             state.channel = [...state.channel, action.payload];
         },
         addNewMsg: (state, action) => {
-            const mainState = state.channel.map((item) => {
-                if (item._d === action.payload.id) {
-                    item.chat.push(action.payload.item);
-                    return item;
+            state.channel.map((i) => {
+                if (i._id === action.payload.item.channel) {
+                    i.chat.push(action.payload.item);
                 }
             });
-            state.channel = mainState;
         },
     },
 });

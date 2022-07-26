@@ -2,8 +2,14 @@
 
 body {
     font-family: 'Roboto Condensed', sans-serif;
+    scroll-behavior: smooth
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ui-chat-box::-webkit-scrollbar{
+    display: none;
+}

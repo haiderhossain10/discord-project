@@ -4,9 +4,10 @@ export const channelCreate = async (req, res, next) => {
     const { channelName, channelCreatorId } = req.body;
     try {
         const create = await Channel.create({ channelName, channelCreatorId });
+        const createdData = await create.populate("channelCreatorId");
         res.status(201).json({
             msg: "you have created channel !",
-            data: create,
+            data: createdData,
         });
     } catch (error) {
         res.status(401).json({

@@ -7,10 +7,13 @@ import { useDispatch } from "react-redux";
 import { initChannelData } from "../../store/features/channelSlice";
 import CreateChannelModal from "../../components/CreateChannelModal";
 import ChatBox from "../../components/ChatBox";
+import { useParams } from "react-router-dom";
 
 const Home = () => {
     const dispatch = useDispatch();
     const [isShowed, setShowed] = useState(false);
+
+    const { id } = useParams();
 
     const channelCreateHandler = () => {
         setShowed(true);
@@ -39,7 +42,8 @@ const Home = () => {
         <>
             <div className="flex relative">
                 <LeftBar channelCreateHandler={channelCreateHandler} />
-                <Sidebar />
+                {typeof id === "undefined" && <Sidebar />}
+
                 <ChatBox />
                 {isShowed && <CreateChannelModal state={setShowed} />}
             </div>

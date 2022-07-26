@@ -10,7 +10,7 @@ const RootRoute = () => {
         <>
             <Routes>
                 <Route element={<PrivateRoute />}>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/*" element={<Home />} />
                     <Route path="/channel/:id" element={<Home />} />
                 </Route>
                 <Route element={<PublicRoute />}>

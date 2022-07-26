@@ -24,7 +24,7 @@ const LeftBar = ({ channelCreateHandler }) => {
                 const token = window.localStorage.getItem("_logged");
                 const decoded = jwtDecode(token);
 
-                if (data.channelCreatorId === decoded._id) {
+                if (data.channelCreatorId._id === decoded._id) {
                     dispatch(addNewChannel(data));
                 }
             }

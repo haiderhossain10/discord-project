@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const ChannelProfile = ({ data }) => {
     const name = [];
-    data.channelName.split(" ").forEach((item) => {
+    data.channelName?.split(" ").forEach((item) => {
         item.split(" ").forEach((it, ind) => {
             name.push(it[ind].split(" ")[0]);
         });

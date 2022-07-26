@@ -24,7 +24,7 @@ const ChannelSchema = new mongoose.Schema(
                 },
                 data: {
                     type: Date,
-                    default: new Date(),
+                    default: new Date().toLocaleString(),
                 },
             },
         ],

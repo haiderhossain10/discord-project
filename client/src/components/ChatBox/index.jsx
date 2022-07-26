@@ -6,42 +6,46 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { addNewMsg } from "../../store/features/channelSlice";
+import moment from "moment";
+import { IoMdArrowDropright } from "react-icons/io";
 
 const ChatBox = () => {
-    const getChannelMsg = useSelector((state) => state.channel.channel);
     const { id } = useParams();
-    const [getMsg, setMsg] = useState("");
-    const socket = useRef();
     const dispatch = useDispatch();
-
+    const getChannelMsg = useSelector((state) => state.channel.channel);
+    const [getMsg, setMsg] = useState("");
+    const [uid, setUid] = useState("");
+    const socket = useRef();
     const chatRef = useRef();
+    const [loggedUserInfo, setLoggedUserInfo] = useState([]);
 
+    // channel message
     const chatData = getChannelMsg.filter((item) => {
         return item._id === id;
     });
 
+    // channel functionality
     useEffect(() => {
         socket.current = io(process.env.REACT_APP_SOCKET_URL);
     }, []);
 
     useEffect(() => {
         chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    });
-
-    useEffect(() => {
         if ("_logged" in localStorage) {
             const token = window.localStorage.getItem("_logged");
             const decoded = jwtDecode(token);
-            socket.current.on("msg_send", (data) => {
-                if (
-                    data.userId._id === decoded._id &&
-                    data.channel._id === id
-                ) {
-                    dispatch(addNewMsg({ item: data, channelId: id }));
-                }
-            });
+            if (typeof decoded !== "undefined") {
+                setUid(decoded._id);
+                setLoggedUserInfo(decoded);
+            }
         }
-    }, [dispatch, id]);
+    }, []);
+
+    useEffect(() => {
+        socket.current.on("msg_received", (data) => {
+            dispatch(addNewMsg({ item: data }));
+        });
+    }, [dispatch]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -57,7 +61,7 @@ const ChatBox = () => {
                             msg: getMsg,
                         },
                     });
-                    if (res) {
+                    if (res.status === 201) {
                         socket.current.emit("msg_send", {
                             msg: getMsg,
                             data: new Date(),
@@ -65,7 +69,7 @@ const ChatBox = () => {
                                 fullName: decoded.fullName,
                                 _id: decoded._id,
                             },
-                            channel: res.data.data,
+                            channel: id,
                         });
                         setMsg("");
                     }
@@ -78,36 +82,69 @@ const ChatBox = () => {
 
     return (
         <>
-            <div className="bg-ui-four w-3/5 h-screen">
+            <div className="bg-ui-four h-screen w-full">
                 <div className="border-b p-3 border-b-ui-secondary">
-                    <h4 className="font-black text-white"># General</h4>
+                    <h4 className="font-black text-white">
+                        {typeof id !== "undefined" ? (
+                            <span>
+                                # {chatData[0]?.channelName} (Channel Creator:{" "}
+                                <span className="capitalize">
+                                    {chatData[0]?.channelCreatorId === uid ||
+                                        (chatData[0]?.channelCreatorId._id ===
+                                            uid && (
+                                            <span className="capitalize">
+                                                {loggedUserInfo?.fullName}
+                                            </span>
+                                        ))}
+                                </span>
+                                )
+                            </span>
+                        ) : (
+                            <span># Example</span>
+                        )}
+                    </h4>
                 </div>
                 <div className="p-3 flex flex-col justify-between">
                     <div
-                        className="overflow-y-scroll"
+                        className="overflow-y-scroll ui-chat-box w-3/4"
                         ref={chatRef}
                         style={{
                             height: "calc(100vh - 140px)",
                         }}
                     >
-                        {chatData[0]?.chat.map((item, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    className="mb-3 last-of-type:mb-0"
-                                >
-                                    <h4 className="text-lg text-white">
-                                        <b>{item.userId.fullName}</b>
-                                        <span className="text-sm ml-3 text-slate-400">
-                                            {item.data}
-                                        </span>
-                                    </h4>
-                                    <p className="text-sm text-white">
-                                        {item.msg}
-                                    </p>
-                                </div>
-                            );
-                        })}
+                        {chatData[0]?._id === id &&
+                            chatData[0]?.chat.map((item, index) => {
+                                return (
+                                    <div
+                                        key={index}
+                                        className="mb-6 last-of-type:mb-0"
+                                    >
+                                        <h4 className="text-lg text-white">
+                                            {/* <b>{item.userId.fullName}</b> */}
+                                            <b>
+                                                {uid === item.userId._id ? (
+                                                    <span>
+                                                        {item.userId.fullName}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-red-400">
+                                                        {item.userId.fullName}
+                                                    </span>
+                                                )}
+                                            </b>
+                                            <span className="text-sm ml-3 text-slate-400">
+                                                {moment(item.data).calendar()}
+                                            </span>
+                                        </h4>
+                                        <p className="text-sm text-white flex gap-1 items-center">
+                                            <div>
+                                                <IoMdArrowDropright className="text-lg" />
+                                            </div>
+                                            {item.msg}
+                                        </p>
+                                    </div>
+                                );
+                            })}
                     </div>
                     <div className="py-3">
                         <form onSubmit={submitHandler}>
