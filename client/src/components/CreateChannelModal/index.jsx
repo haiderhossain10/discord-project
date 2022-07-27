@@ -46,7 +46,7 @@ const CreateChannelModal = ({ state }) => {
                 style={{ backgroundColor: "rgba(0,0,0, .5" }}
             >
                 <OutsideClickHandler onOutsideClick={() => state(false)}>
-                    <div className="w-4/12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-ui-four p-10 rounded">
+                    <div className="w-10/12 lg:w-4/12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-ui-four p-10 rounded">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="mb-3">
                                 <input

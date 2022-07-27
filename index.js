@@ -91,10 +91,11 @@ if (process.env.NODE_ENVIRONMENT === "production") {
     app.get("*", (req, res) => {
         res.sendFile(path.join("client", "build", "index.html"));
     });
+
     server.listen(port, () => {
         console.log(`listening on http://localhost:${port}`);
     });
-} else {
+} else if (process.env.NODE_ENVIRONMENT === "development") {
     server.listen(port, () => {
         console.log(`listening on http://localhost:${port}`);
     });

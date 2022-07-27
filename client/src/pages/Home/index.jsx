@@ -55,8 +55,6 @@ const Home = () => {
         init();
     }, [dispatch]);
 
-    console.log(id);
-
     return (
         <>
             <div className="flex relative">
