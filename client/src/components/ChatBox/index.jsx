@@ -40,7 +40,7 @@ const ChatBox = () => {
 
     // channel functionality
     useEffect(() => {
-        socket.current = io("ws://haider-discord.herokuapp.com");
+        socket.current = io("ws://localhost:5000");
         if ("_logged" in localStorage) {
             const token = window.localStorage.getItem("_logged");
             const decoded = jwtDecode(token);

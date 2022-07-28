@@ -17,7 +17,7 @@ const CreateChannelModal = ({ state }) => {
     const socket = useRef();
 
     useEffect(() => {
-        socket.current = io("ws://haider-discord.herokuapp.com");
+        socket.current = io("ws://localhost:5000");
     }, []);
 
     const onSubmit = async (formData) => {

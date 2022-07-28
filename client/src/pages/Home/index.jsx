@@ -26,7 +26,7 @@ const Home = () => {
     };
 
     useEffect(() => {
-        socket.current = io("ws://haider-discord.herokuapp.com");
+        socket.current = io("ws://localhost:5000");
         socket.current.on("online_user_received", (data) => {
             dispatch(addOnlineUser(data));
         });
