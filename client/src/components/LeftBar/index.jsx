@@ -15,7 +15,7 @@ const LeftBar = ({ channelCreateHandler }) => {
     const socket = useRef();
 
     useEffect(() => {
-        socket.current = io("/");
+        socket.current = io("ws://haider-discord.herokuapp.com");
     }, []);
 
     useEffect(() => {

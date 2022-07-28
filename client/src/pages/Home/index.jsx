@@ -13,7 +13,6 @@ import ChatBox from "../../components/ChatBox";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import Option from "../../components/Option";
-
 const Home = () => {
     const dispatch = useDispatch();
     const [isShowed, setShowed] = useState(false);
@@ -27,7 +26,7 @@ const Home = () => {
     };
 
     useEffect(() => {
-        socket.current = io("/");
+        socket.current = io("ws://haider-discord.herokuapp.com");
         socket.current.on("online_user_received", (data) => {
             dispatch(addOnlineUser(data));
         });

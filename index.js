@@ -71,6 +71,7 @@ io.on("connection", (socket) => {
             user.socketId = socket.id;
             onlineUsers.push(user);
         }
+        console.log(data);
         io.emit("online_user_received", onlineUsers);
     });
 

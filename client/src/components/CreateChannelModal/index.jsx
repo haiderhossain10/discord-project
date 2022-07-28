@@ -4,6 +4,8 @@ import OutsideClickHandler from "react-outside-click-handler";
 import jwtDecode from "jwt-decode";
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { addOnlineUser } from "../../store/features/channelSlice";
 
 const CreateChannelModal = ({ state }) => {
     const {
@@ -15,7 +17,7 @@ const CreateChannelModal = ({ state }) => {
     const socket = useRef();
 
     useEffect(() => {
-        socket.current = io("/");
+        socket.current = io("ws://haider-discord.herokuapp.com");
     }, []);
 
     const onSubmit = async (formData) => {
@@ -31,7 +33,14 @@ const CreateChannelModal = ({ state }) => {
                         channelCreatorId: decoded._id,
                     },
                 });
-                socket.current.emit("create_channel", res.data.data);
+                if (res.status === 201) {
+                    const joinRes = await axios({
+                        url: `/api/v1/create/join/channel?channelId=${res.data.data._id}&userId=${decoded._id}`,
+                        method: "PUT",
+                    });
+                    joinRes.status === 201 &&
+                        socket.current.emit("create_channel", res.data.data);
+                }
                 state(false);
             } catch (error) {
                 console.log(error);

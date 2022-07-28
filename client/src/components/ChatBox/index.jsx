@@ -11,6 +11,7 @@ import { IoMdArrowDropright } from "react-icons/io";
 import msgAlert from "./../../assets/audio/msg-tone.mp3";
 import { BsInfoCircleFill } from "react-icons/bs";
 import OutsideClickHandler from "react-outside-click-handler";
+import AddUserModal from "../AddUserModal";
 
 const ChatBox = () => {
     // audio tones
@@ -23,6 +24,7 @@ const ChatBox = () => {
     const [uid, setUid] = useState("");
     const socket = useRef();
     const chatRef = useRef();
+    const [isOptionShowed, setOptionShowed] = useState(false);
 
     // is option true
     const [isDropdownOpened, setDropdownOpened] = useState(false);
@@ -38,7 +40,7 @@ const ChatBox = () => {
 
     // channel functionality
     useEffect(() => {
-        socket.current = io("/");
+        socket.current = io("ws://haider-discord.herokuapp.com");
         if ("_logged" in localStorage) {
             const token = window.localStorage.getItem("_logged");
             const decoded = jwtDecode(token);
@@ -124,26 +126,34 @@ const ChatBox = () => {
                                     >
                                         <BsInfoCircleFill className="text-xl text-white " />
                                     </button>
+                                    {isDropdownOpened && (
+                                        <ul className="absolute bg-white w-48 right-0 top-8">
+                                            <li className="border-b border-b-ui-primary-hover last-of-type:border-b-0">
+                                                <button
+                                                    onClick={() => {
+                                                        setOptionShowed(true);
+                                                        setDropdownOpened(
+                                                            false
+                                                        );
+                                                    }}
+                                                    className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200"
+                                                >
+                                                    Add People
+                                                </button>
+                                            </li>
+                                            <li className="border-b border-b-ui-primary-hover last-of-type:border-b-0">
+                                                <button className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200">
+                                                    Exit
+                                                </button>
+                                            </li>
+                                            <li className="border-b border-b-fuchsia-400 last-of-type:border-b-0">
+                                                <button className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200">
+                                                    Delete Channel
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    )}
                                 </OutsideClickHandler>
-                                {isDropdownOpened && (
-                                    <ul className="absolute bg-white w-48 right-0 top-8">
-                                        <li className="border-b border-b-ui-primary-hover last-of-type:border-b-0">
-                                            <button className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200">
-                                                Add People
-                                            </button>
-                                        </li>
-                                        <li className="border-b border-b-ui-primary-hover last-of-type:border-b-0">
-                                            <button className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200">
-                                                Exit
-                                            </button>
-                                        </li>
-                                        <li className="border-b border-b-fuchsia-400 last-of-type:border-b-0">
-                                            <button className="text-sm py-2 px-3 w-full text-left hover:bg-ui-primary hover:text-white duration-200">
-                                                Delete Channel
-                                            </button>
-                                        </li>
-                                    </ul>
-                                )}
                             </>
                         )}
                     </div>
@@ -201,6 +211,7 @@ const ChatBox = () => {
                     </div>
                 </div>
             </div>
+            {isOptionShowed && <AddUserModal state={setOptionShowed} />}
         </>
     );
 };

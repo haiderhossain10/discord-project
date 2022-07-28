@@ -1,5 +1,7 @@
 import Channel from "../models/Channel.js";
+import User from "../models/User.js";
 
+// create channel
 export const channelCreate = async (req, res, next) => {
     const { channelName, channelCreatorId } = req.body;
     try {
@@ -18,29 +20,32 @@ export const channelCreate = async (req, res, next) => {
     }
 };
 
+// join users in channel
 export const joinChannel = async (req, res) => {
     try {
-        const find = await Channel.find({
-            $or: [{ "joined.userId": req.query.userId }],
+        const findChannel = await Channel.find({
+            _id: req.query.channelId,
         });
-        if (
-            find.length == 0 &&
-            find[0]?.channelCreatorId !== req.query.userId
-        ) {
-            const update = await Channel.updateMany(
-                { _id: req.query.channelId },
-                { $push: { joined: { userId: req.query.userId } } }
+        if (findChannel) {
+            const isExist = findChannel[0].joined.some(
+                (i) => i.userId.toString() === req.query.userId
             );
-            res.status(201).json({
-                msg: "you are joined successfully!",
-                data: update,
-            });
-        } else {
-            res.status(400).json({
-                error: {
-                    msg: "you have already joined !",
-                },
-            });
+            if (!isExist) {
+                const update = await Channel.updateMany(
+                    { _id: req.query.channelId },
+                    { $push: { joined: { userId: req.query.userId } } }
+                );
+                res.status(201).json({
+                    msg: "you are joined successfully!",
+                    data: update,
+                });
+            } else {
+                res.status(400).json({
+                    error: {
+                        msg: "you have already joined !",
+                    },
+                });
+            }
         }
     } catch (error) {
         res.status(401).json({
@@ -51,6 +56,7 @@ export const joinChannel = async (req, res) => {
     }
 };
 
+// find channel who already joined in channel
 export const findJoinedChannel = async (req, res) => {
     try {
         const find = await Channel.find({
@@ -93,6 +99,7 @@ export const findJoinedChannel = async (req, res) => {
     }
 };
 
+// send message
 export const createChannelMsg = async (req, res) => {
     try {
         const update = await Channel.updateMany(
@@ -132,6 +139,24 @@ export const createChannelMsg = async (req, res) => {
         res.status(401).json({
             error: {
                 msg: "something wrong in create new message: api",
+            },
+        });
+    }
+};
+
+// find users
+export const findUser = async (req, res) => {
+    try {
+        const find = await User.find({});
+        if (find) {
+            res.status(200).json({
+                data: find,
+            });
+        }
+    } catch (error) {
+        res.status(401).json({
+            error: {
+                msg: "something wrong in find user: api",
             },
         });
     }

@@ -5,6 +5,7 @@ export const channelSlice = createSlice({
     initialState: {
         channel: [],
         onlineUser: [],
+        users: [],
     },
     reducers: {
         initChannelData: (state, action) => {
@@ -23,9 +24,17 @@ export const channelSlice = createSlice({
         addOnlineUser: (state, action) => {
             state.onlineUser = action.payload;
         },
+        initUsers: (state, action) => {
+            state.users = action.payload;
+        },
     },
 });
 
-export const { initChannelData, addNewChannel, addNewMsg, addOnlineUser } =
-    channelSlice.actions;
+export const {
+    initChannelData,
+    addNewChannel,
+    addNewMsg,
+    addOnlineUser,
+    initUsers,
+} = channelSlice.actions;
 export default channelSlice.reducer;
